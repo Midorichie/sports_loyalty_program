@@ -1,97 +1,125 @@
 # Sports Fan Loyalty Token (SLT)
 
-## Branch 1 Update: Enhanced Redemption & Interactivity
+## Branch 2 Update: Multi-Team Compatibility & Enhanced Analytics
 
 ### New Features
-1. **Merchandise Redemption System**
-   - Digital catalog of team merchandise
-   - Token-based purchasing mechanism
-   - Exclusive items for higher-tier token holders
+1. **Multi-Team Support**
+   - Multiple teams can now participate in the loyalty program
+   - Fans can join multiple teams and track achievements across teams
+   - League commissioner role for overall governance
 
-2. **Ticket Redemption System**
-   - Event ticketing integrated into the token ecosystem
-   - Automated availability tracking
-   - Time-locked redemption based on event dates
+2. **Seasonal Achievements**
+   - Time-based challenges and rewards
+   - Team-specific achievements
+   - Point-based progression system
 
-3. **Interactive Prediction Game**
-   - Make predictions on match outcomes
-   - Stake tokens on predictions
-   - Earn double tokens for correct predictions
+3. **Enhanced Analytics**
+   - Comprehensive tracking of fan engagement
+   - Team performance metrics
+   - Seasonal statistics and historical data
 
 ### Technical Updates
 
 #### New Data Structures
 ```clarity
-;; Merchandise Catalog
-(define-map merchandise-catalog uint {
+;; Team Management
+(define-map teams uint {
     name: (string-ascii 64),
-    price: uint,
-    available: uint,
-    exclusive: bool
+    owner: principal,
+    total-fans: uint,
+    season-points: uint
 })
 
-;; Ticket Catalog
-(define-map ticket-catalog uint {
-    event-name: (string-ascii 64),
-    price: uint,
-    event-date: uint,
-    available: uint
+;; Fan Analytics
+(define-map team-fan-data (tuple (team-id uint) (fan principal)) {
+    join-date: uint,
+    attendance: uint,
+    predictions-made: uint,
+    predictions-won: uint,
+    items-purchased: uint,
+    total-spent: uint
 })
 
-;; Game Predictions
-(define-map game-predictions uint {
-    match-id: uint,
-    prediction: uint,
-    result: (optional uint),
-    tokens-wagered: uint
+;; Achievements
+(define-map seasonal-achievements uint {
+    name: (string-ascii 64),
+    description: (string-ascii 256),
+    points-required: uint,
+    reward: uint,
+    team-id: uint
 })
 ```
 
-#### New Functions
-1. **Redemption Functions**
-   - `redeem-merchandise`: Exchange tokens for team merchandise
-   - `redeem-ticket`: Purchase event tickets with tokens
+#### Key Functions
+1. **Team Management**
+   - `register-team`: Add a new team to the ecosystem
+   - `join-team`: Fans can officially join a team
 
-2. **Game Functions**
-   - `make-prediction`: Stake tokens on match outcomes
-   - `resolve-prediction`: Determine winners and distribute rewards
+2. **Achievement System**
+   - `add-achievement`: Create new seasonal achievements
+   - `claim-achievement`: Fans can claim rewards for completed achievements
+
+3. **Analytics**
+   - `get-team-stats`: Retrieve comprehensive team statistics
+   - `get-fan-stats`: Get detailed engagement metrics for individual fans
 
 ### Usage Examples
 
+#### For League Commissioner
+```clarity
+;; Register a new team
+(contract-call? .sports-loyalty-token register-team u1 "New York Titans")
+
+;; Start a new season
+(contract-call? .sports-loyalty-token start-new-season)
+```
+
 #### For Team Administrators
 ```clarity
-;; Add new merchandise
-(contract-call? .sports-loyalty-token add-merchandise u1 "Championship Jersey" u500 u100 true)
-
-;; Add new ticket event
-(contract-call? .sports-loyalty-token add-ticket-event u1 "Season Opener" u1000 u1682541600 u5000)
-
-;; Resolve a prediction
-(contract-call? .sports-loyalty-token resolve-prediction u1 u1)
+;; Add a seasonal achievement
+(contract-call? .sports-loyalty-token add-achievement u1 
+    "Super Fan" 
+    "Attend 10 games this season" 
+    u1000 
+    u500 
+    u1)
 ```
 
 #### For Fans
 ```clarity
-;; Redeem merchandise
-(contract-call? .sports-loyalty-token redeem-merchandise u1)
+;; Join a team
+(contract-call? .sports-loyalty-token join-team u1)
 
-;; Redeem ticket
-(contract-call? .sports-loyalty-token redeem-ticket u1)
+;; Claim an achievement
+(contract-call? .sports-loyalty-token claim-achievement u1)
 
-;; Make a prediction
-(contract-call? .sports-loyalty-token make-prediction u1 u1 u100)
+;; Check personal stats
+(contract-call? .sports-loyalty-token get-fan-stats u1 tx-sender)
 ```
+
+### Analytics Dashboard Integration
+The enhanced analytics can be integrated with external dashboards using the following endpoints:
+- Team Performance: `get-team-stats`
+- Fan Engagement: `get-fan-stats`
+- Achievement Tracking: User achievements list
 
 ### Testing the New Features
 ```bash
-clarinet test test/redemption_tests.clar
-clarinet test test/prediction_tests.clar
+clarinet test test/multi_team_tests.clar
+clarinet test test/achievement_tests.clar
+clarinet test test/analytics_tests.clar
 ```
 
-## Upcoming in Branch 2
-- Enhanced analytics for engagement tracking
-- Multi-team compatibility
-- Seasonal rewards and achievements
+## Deployment and Migration Guide
+1. Deploy the updated contract
+2. Migrate existing team data to the new multi-team structure
+3. Set up the league commissioner role
+4. Create initial seasonal achievements
+
+## Future Enhancements
+- Cross-team collaborations and joint achievements
+- Machine learning integration for personalized fan experiences
+- Decentralized governance for league-wide decisions
 
 ## Contributing
 1. Fork the repository
