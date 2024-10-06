@@ -1,101 +1,97 @@
 # Sports Fan Loyalty Token (SLT)
 
-## Overview
-The Sports Fan Loyalty Token (SLT) is a blockchain-based fan engagement system built on the Stacks blockchain, leveraging Bitcoin's security. This project enables sports teams to create and manage tokenized loyalty programs where fans can earn, trade, and redeem tokens for various rewards including merchandise, tickets, and exclusive experiences.
+## Branch 1 Update: Enhanced Redemption & Interactivity
 
-## Features
-- **SFT-20 Compatible Token**: Implements a standard-compliant fungible token
-- **Reward Tiers System**: Multiple loyalty tiers with different benefits
-- **Administrative Controls**: Secure management of token distribution and rewards
-- **Transparent Tracking**: All transactions and reward distributions are recorded on-chain
+### New Features
+1. **Merchandise Redemption System**
+   - Digital catalog of team merchandise
+   - Token-based purchasing mechanism
+   - Exclusive items for higher-tier token holders
 
-## Technical Architecture
-### Smart Contract Structure
-The project consists of a main Clarity smart contract with the following components:
+2. **Ticket Redemption System**
+   - Event ticketing integrated into the token ecosystem
+   - Automated availability tracking
+   - Time-locked redemption based on event dates
 
-1. **Token Management**
-   - Balance tracking
-   - Transfer functionality
-   - Minting capabilities (restricted to contract owner)
+3. **Interactive Prediction Game**
+   - Make predictions on match outcomes
+   - Stake tokens on predictions
+   - Earn double tokens for correct predictions
 
-2. **Reward System**
-   - Tiered rewards structure
-   - Configurable reward levels
-   - Automated reward distribution
+### Technical Updates
 
-### Data Maps
+#### New Data Structures
 ```clarity
-(define-map balances principal uint)
-(define-map reward-tiers uint {
-    name: (string-ascii 32),
-    required-tokens: uint,
-    discount: uint
+;; Merchandise Catalog
+(define-map merchandise-catalog uint {
+    name: (string-ascii 64),
+    price: uint,
+    available: uint,
+    exclusive: bool
+})
+
+;; Ticket Catalog
+(define-map ticket-catalog uint {
+    event-name: (string-ascii 64),
+    price: uint,
+    event-date: uint,
+    available: uint
+})
+
+;; Game Predictions
+(define-map game-predictions uint {
+    match-id: uint,
+    prediction: uint,
+    result: (optional uint),
+    tokens-wagered: uint
 })
 ```
 
-## Getting Started
-### Prerequisites
-- Stacks blockchain development environment
-- Clarity CLI tools
-- A Stacks wallet for testing
+#### New Functions
+1. **Redemption Functions**
+   - `redeem-merchandise`: Exchange tokens for team merchandise
+   - `redeem-ticket`: Purchase event tickets with tokens
 
-### Installation
-1. Clone the repository
-```bash
-git clone [repository-url]
-cd sports-loyalty-token
-```
+2. **Game Functions**
+   - `make-prediction`: Stake tokens on match outcomes
+   - `resolve-prediction`: Determine winners and distribute rewards
 
-2. Deploy the contract (using Clarinet)
-```bash
-clarinet contract deploy
-```
+### Usage Examples
 
-## Usage
-### For Team Administrators
+#### For Team Administrators
 ```clarity
-;; Mint new tokens
-(contract-call? .sports-loyalty-token mint u1000 'SPGEN5ZXPPW3VQJE1Y31P3QSKX11XCBV8BTGZDKX)
+;; Add new merchandise
+(contract-call? .sports-loyalty-token add-merchandise u1 "Championship Jersey" u500 u100 true)
 
-;; Add a reward tier
-(contract-call? .sports-loyalty-token add-reward-tier u1 "Silver" u1000 u10)
+;; Add new ticket event
+(contract-call? .sports-loyalty-token add-ticket-event u1 "Season Opener" u1000 u1682541600 u5000)
+
+;; Resolve a prediction
+(contract-call? .sports-loyalty-token resolve-prediction u1 u1)
 ```
 
-### For Fans
+#### For Fans
 ```clarity
-;; Check balance
-(contract-call? .sports-loyalty-token get-balance 'SPGEN5ZXPPW3VQJE1Y31P3QSKX11XCBV8BTGZDKX)
+;; Redeem merchandise
+(contract-call? .sports-loyalty-token redeem-merchandise u1)
 
-;; Transfer tokens
-(contract-call? .sports-loyalty-token transfer u100 'SPGEN5ZXPPW3VQJE1Y31P3QSKX11XCBV8BTGZDKX 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7)
+;; Redeem ticket
+(contract-call? .sports-loyalty-token redeem-ticket u1)
+
+;; Make a prediction
+(contract-call? .sports-loyalty-token make-prediction u1 u1 u100)
 ```
 
-## Roadmap
-### Phase 1 (Current)
-- [x] Basic token implementation
-- [x] Reward tiers system
-- [x] Administrative functions
-
-### Phase 2 (Planned)
-- [ ] Merchandise and ticket redemption
-- [ ] Time-locked exclusive experiences
-- [ ] Enhanced reward mechanics
-
-### Phase 3 (Future)
-- [ ] Interactive elements (games, predictions)
-- [ ] Cross-team compatibility
-- [ ] Advanced analytics dashboard
-
-## Security
-- Contract owner privileges are restricted to authorized team administrators
-- All functions include proper access controls
-- Balance checks prevent unauthorized token creation
-
-## Testing
-Run the test suite using Clarinet:
+### Testing the New Features
 ```bash
-clarinet test
+clarinet test test/redemption_tests.clar
+clarinet test test/prediction_tests.clar
 ```
+
+## Upcoming in Branch 2
+- Enhanced analytics for engagement tracking
+- Multi-team compatibility
+- Seasonal rewards and achievements
 
 ## Contributing
 1. Fork the repository
